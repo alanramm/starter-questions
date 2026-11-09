@@ -5,16 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Differentiation Practice</title>
 
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['\\(', '\\)']]
-  }
-};
-</script>
-
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
 <style>
 body{
     font-family:Arial,sans-serif;
@@ -58,12 +48,12 @@ button{
     top:8px;
     left:10px;
     font-weight:bold;
-    color:#777;
+    color:#666;
 }
 
 .question{
     margin-top:25px;
-    font-size:20px;
+    font-size:22px;
     text-align:center;
 }
 
@@ -81,8 +71,8 @@ button{
     }
 }
 </style>
-</head>
 
+</head>
 <body>
 
 <h1>Differentiation Practice</h1>
@@ -98,12 +88,6 @@ button{
 <script>
 
 let revealIndex = 0;
-
-function renderMath() {
-    if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise();
-    }
-}
 
 function randInt(min,max){
     return Math.floor(Math.random()*(max-min+1))+min;
@@ -121,25 +105,24 @@ function polynomialQuestion(){
 
     const a = nonZero(-9,9);
     const b = nonZero(-9,9);
-    const c = randInt(-9,9);
     const p = randInt(2,6);
 
     return {
-        key:`poly-${a}-${b}-${c}-${p}`,
-        q:`\\(\\frac{d}{dx}\\left(${a}x^{${p}}${b>=0?'+':''}${b}x${c>=0?'+':''}${c}\\right)\\)`,
-        a:`\\(${a*p}x^{${p-1}}${b>=0?'+':''}${b}\\)`
+        key: `poly-${a}-${b}-${p}`,
+        q: `d/dx (${a}x^${p} ${b>=0?"+":""}${b}x)`,
+        a: `${a*p}x^${p-1} ${b>=0?"+":""}${b}`
     };
 }
 
 function expQuestion(){
 
     const a = randInt(1,9);
-    const k = nonZero(-6,6);
+    const k = nonZero(1,6);
 
     return {
-        key:`exp-${a}-${k}`,
-        q:`\\(\\frac{d}{dx}\\left(${a}e^{${k}x}\\right)\\)`,
-        a:`\\(${a*k}e^{${k}x}\\)`
+        key: `exp-${a}-${k}`,
+        q: `d/dx (${a}e^(${k}x))`,
+        a: `${a*k}e^(${k}x)`
     };
 }
 
@@ -149,36 +132,96 @@ function trigQuestion(){
     const b = randInt(1,8);
 
     if(Math.random() < 0.5){
-
-        return {
+        return{
             key:`sin-${a}-${b}`,
-            q:`\\(\\frac{d}{dx}\\left(${a}\\sin(${b}x)\\right)\\)`,
-            a:`\\(${a*b}\\cos(${b}x)\\)`
+            q:`d/dx (${a}sin(${b}x))`,
+            a:`${a*b}cos(${b}x)`
         };
     }
 
-    return {
+    return{
         key:`cos-${a}-${b}`,
-        q:`\\(\\frac{d}{dx}\\left(${a}\\cos(${b}x)\\right)\\)`,
-        a:`\\(-${a*b}\\sin(${b}x)\\)`
+        q:`d/dx (${a}cos(${b}x))`,
+        a:`-${a*b}sin(${b}x)`
     };
 }
 
 function mixedQuestion(){
 
-    const type = randInt(1,4);
+    const a = randInt(2,8);
+    const k = randInt(2,6);
 
-    if(type===1){
+    return{
+        key:`mixed-${a}-${k}`,
+        q:`d/dx (${a}e^(${k}x) + x^4)`,
+        a:`${a*k}e^(${k}x) + 4x^3`
+    };
+}
 
-        const a=randInt(2,9);
-        const b=randInt(2,9);
-        const k=randInt(2,6);
+function generateQuestions(){
 
-        return{
-            key:`m1-${a}-${b}-${k}`,
-            q:`\\(\\frac{d}{dx}\\left(${a}x^3+${b}e^{${k}x}\\right)\\)`,
-            a:`\\(${3*a}x^2+${b*k}e^{${k}x}\\)`
-        };
+    revealIndex = 0;
+
+    const used = new Set();
+    const questions = [];
+
+    function addQuestions(generator,count){
+
+        while(count > 0){
+
+            const q = generator();
+
+            if(!used.has(q.key)){
+                used.add(q.key);
+                questions.push(q);
+                count--;
+            }
+        }
     }
 
-    if(type===2){
+    addQuestions(polynomialQuestion,4);
+    addQuestions(expQuestion,4);
+    addQuestions(trigQuestion,4);
+    addQuestions(mixedQuestion,4);
+
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    questions.forEach((item,index)=>{
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="number">${index + 1}</div>
+            <div class="question">${item.q}</div>
+            <div class="answer">${item.a}</div>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+function revealAll(){
+
+    document.querySelectorAll(".answer").forEach(answer=>{
+        answer.style.display="block";
+    });
+}
+
+function revealNext(){
+
+    const answers = document.querySelectorAll(".answer");
+
+    if(revealIndex < answers.length){
+        answers[revealIndex].style.display = "block";
+        revealIndex++;
+    }
+}
+
+generateQuestions();
+
+</script>
+
+</body>
+</html>
