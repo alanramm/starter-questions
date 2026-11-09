@@ -4,34 +4,181 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Differentiation Practice</title>
+
 <script>
-window.MathJax={tex:{inlineMath:[["\(","\)"]]}};
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']]
+  }
+};
 </script>
+
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <style>
-body{font-family:Arial,sans-serif;background:#f4f6f8;margin:20px}h1{text-align:center}.controls{text-align:center;margin-bottom:20px}button{padding:12px 20px;margin:5px;font-size:16px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:#fff;border-radius:10px;padding:15px;min-height:140px;box-shadow:0 2px 8px rgba(0,0,0,.1);position:relative}.number{position:absolute;top:8px;left:10px;font-weight:bold;color:#777}.question{margin-top:25px;font-size:20px;text-align:center}.answer{margin-top:15px;text-align:center;font-size:18px;color:darkgreen;display:none}@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6f8;
+    margin:20px;
+}
+
+h1{
+    text-align:center;
+}
+
+.controls{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+button{
+    padding:12px 20px;
+    margin:5px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:15px;
+    min-height:140px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    position:relative;
+}
+
+.number{
+    position:absolute;
+    top:8px;
+    left:10px;
+    font-weight:bold;
+    color:#777;
+}
+
+.question{
+    margin-top:25px;
+    font-size:20px;
+    text-align:center;
+}
+
+.answer{
+    margin-top:15px;
+    text-align:center;
+    font-size:18px;
+    color:darkgreen;
+    display:none;
+}
+
+@media(max-width:1000px){
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
 </style>
 </head>
+
 <body>
+
 <h1>Differentiation Practice</h1>
+
 <div class="controls">
-<button onclick="revealAll()">Reveal All Answers</button>
-<button onclick="revealNext()">Reveal Next Answer</button>
-<button onclick="generateQuestions()">Refresh Questions</button>
+    <button onclick="revealAll()">Reveal All Answers</button>
+    <button onclick="revealNext()">Reveal Next Answer</button>
+    <button onclick="generateQuestions()">Refresh Questions</button>
 </div>
+
 <div id="grid" class="grid"></div>
+
 <script>
-let revealIndex=0;
-function renderMath(){if(window.MathJax&&typeof MathJax.typesetPromise==='function'){MathJax.typesetPromise();}}
-function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-function nonZero(a,b){let n=0;while(n===0)n=randInt(a,b);return n;}
-function polynomialQuestion(){const a=nonZero(-9,9),b=nonZero(-9,9),c=randInt(-9,9),p=randInt(2,6);return{key:`poly-${a}-${b}-${c}-${p}`,q:`\(\frac{d}{dx}\left(${a}x^{${p}}${b>=0?'+':''}${b}x${c>=0?'+':''}${c}\right)\)`,a:`\(${a*p}x^{${p-1}}${b>=0?'+':''}${b}\)`};}
-function expQuestion(){const a=randInt(1,9),k=nonZero(-6,6);return{key:`exp-${a}-${k}`,q:`\(\frac{d}{dx}\left(${a}e^{${k}x}\right)\)`,a:`\(${a*k}e^{${k}x}\)`};}
-function trigQuestion(){const a=randInt(1,9),b=randInt(1,8);if(Math.random()<0.5){return{key:`sin-${a}-${b}`,q:`\(\frac{d}{dx}\left(${a}\sin(${b}x)\right)\)`,a:`\(${a*b}\cos(${b}x)\)`};}return{key:`cos-${a}-${b}`,q:`\(\frac{d}{dx}\left(${a}\cos(${b}x)\right)\)`,a:`\(-${a*b}\sin(${b}x)\)`};}
-function mixedQuestion(){const a=randInt(2,8),k=randInt(2,6);return{key:`m-${a}-${k}-${Math.random()}`,q:`\(\frac{d}{dx}\left(${a}e^{${k}x}+x^4\right)\)`,a:`\(${a*k}e^{${k}x}+4x^3\)`};}
-function generateQuestions(){revealIndex=0;const used=new Set(),qs=[];function add(gen,c){while(c>0){const q=gen();if(!used.has(q.key)){used.add(q.key);qs.push(q);c--;}}}add(polynomialQuestion,4);add(expQuestion,4);add(trigQuestion,4);add(mixedQuestion,4);const grid=document.getElementById('grid');grid.innerHTML='';qs.forEach((it,i)=>{const d=document.createElement('div');d.className='card';d.innerHTML=`<div class="number">${i+1}</div><div class="question">${it.q}</div><div class="answer">${it.a}</div>`;grid.appendChild(d);});setTimeout(renderMath,300);}
-function revealAll(){document.querySelectorAll('.answer').forEach(a=>a.style.display='block');renderMath();}
-function revealNext(){const a=document.querySelectorAll('.answer');if(revealIndex<a.length){a[revealIndex].style.display='block';revealIndex++;renderMath();}}
-window.addEventListener('load',generateQuestions);
-</script>
-</body></html>
+
+let revealIndex = 0;
+
+function renderMath() {
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+    }
+}
+
+function randInt(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+function nonZero(min,max){
+    let n = 0;
+    while(n === 0){
+        n = randInt(min,max);
+    }
+    return n;
+}
+
+function polynomialQuestion(){
+
+    const a = nonZero(-9,9);
+    const b = nonZero(-9,9);
+    const c = randInt(-9,9);
+    const p = randInt(2,6);
+
+    return {
+        key:`poly-${a}-${b}-${c}-${p}`,
+        q:`\\(\\frac{d}{dx}\\left(${a}x^{${p}}${b>=0?'+':''}${b}x${c>=0?'+':''}${c}\\right)\\)`,
+        a:`\\(${a*p}x^{${p-1}}${b>=0?'+':''}${b}\\)`
+    };
+}
+
+function expQuestion(){
+
+    const a = randInt(1,9);
+    const k = nonZero(-6,6);
+
+    return {
+        key:`exp-${a}-${k}`,
+        q:`\\(\\frac{d}{dx}\\left(${a}e^{${k}x}\\right)\\)`,
+        a:`\\(${a*k}e^{${k}x}\\)`
+    };
+}
+
+function trigQuestion(){
+
+    const a = randInt(1,9);
+    const b = randInt(1,8);
+
+    if(Math.random() < 0.5){
+
+        return {
+            key:`sin-${a}-${b}`,
+            q:`\\(\\frac{d}{dx}\\left(${a}\\sin(${b}x)\\right)\\)`,
+            a:`\\(${a*b}\\cos(${b}x)\\)`
+        };
+    }
+
+    return {
+        key:`cos-${a}-${b}`,
+        q:`\\(\\frac{d}{dx}\\left(${a}\\cos(${b}x)\\right)\\)`,
+        a:`\\(-${a*b}\\sin(${b}x)\\)`
+    };
+}
+
+function mixedQuestion(){
+
+    const type = randInt(1,4);
+
+    if(type===1){
+
+        const a=randInt(2,9);
+        const b=randInt(2,9);
+        const k=randInt(2,6);
+
+        return{
+            key:`m1-${a}-${b}-${k}`,
+            q:`\\(\\frac{d}{dx}\\left(${a}x^3+${b}e^{${k}x}\\right)\\)`,
+            a:`\\(${3*a}x^2+${b*k}e^{${k}x}\\)`
+        };
+    }
+
+    if(type===2){
